@@ -43,9 +43,9 @@ Doosan Robotics ROKEY BOOT CAMP 9기 협동 프로젝트(4인 팀, 2026.08.14 ~ 
 
 | 저장소 | 용도 |
 |---|---|
-| [cobot3_project](https://github.com/rokeydg1-sudo/cobot3_project) (v1) | 통합 단계(08-21 ~ 08-24): 작업 요청형 FMS · cuOpt · Nav2 통합 |
-| **cobot3_project2 (v2, 이 저장소)** | 최종 구성(08-25 ~ 08-30): cuOpt 배분 · 미션 컨트롤러 · 스냅샷 비전 도킹. v1 통합 단계 커밋(`c831af5`)에서 이어 시작해 커밋 이력에 v1 시기 커밋이 함께 있습니다 |
-| [cobot3_ws](https://github.com/rokeydg1-sudo/cobot3_ws) | 수업 기록용(08-14 ~ 08-20): Isaac Sim 기초 실습 · M0609 IK · Nova Carter 순찰 |
+| [isaac-sim-multi-amr-digital-twin-v1](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v1) (v1, 원본 rokeydg1-sudo/cobot3_project) | 통합 단계(08-21 ~ 08-24): 작업 요청형 FMS · cuOpt · Nav2 통합 |
+| **isaac-sim-multi-amr-digital-twin-v2 (v2, 이 저장소, 원본 rokeydg1-sudo/cobot3_project2)** | 최종 구성(08-25 ~ 08-30): cuOpt 배분 · 미션 컨트롤러 · 스냅샷 비전 도킹. v1 통합 단계 커밋(`c831af5`)에서 이어 시작해 커밋 이력에 v1 시기 커밋이 함께 있습니다 |
+| [cobot3_ws](https://github.com/rokeydg1-sudo/cobot3_ws) (원본 계정, 포크하지 않음) | 수업 기록용(08-14 ~ 08-20): Isaac Sim 기초 실습 · M0609 IK · Nova Carter 순찰 |
 
 ## 2. 시연 영상
 
@@ -124,7 +124,7 @@ flowchart LR
 
 - AMR이 상태를 보내며 다음 작업을 요청하는 FMS(`ros2_ws/src/interfaces/srv/RequestTask.srv`)와 Nav2 주행을 묶은 구성입니다.
 - 08-27에 위 3-1 구성으로 다시 짜면서 FMS 노드와 Nav2는 최종 코드에서 빠졌습니다.
-- 통합 단계 코드는 이 저장소의 커밋 이력(예: [c367ae7](https://github.com/rokeydg1-sudo/cobot3_project2/commit/c367ae7d55c1f5b24b5b166c7d01d94aaf32c253) pull 방식 FMS · cuOpt, [c63cb81](https://github.com/rokeydg1-sudo/cobot3_project2/commit/c63cb817628e65c9950915aa1014b5c805e97ab5) Nav2 통합)과 [cobot3_project](https://github.com/rokeydg1-sudo/cobot3_project) 저장소에 있습니다.
+- 통합 단계 코드는 이 저장소의 커밋 이력(예: [c367ae7](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/c367ae7d55c1f5b24b5b166c7d01d94aaf32c253) pull 방식 FMS · cuOpt, [c63cb81](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/c63cb817628e65c9950915aa1014b5c805e97ab5) Nav2 통합)과 [v1 저장소](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v1)에 있습니다.
 
 ## 4. 프로젝트 전체 기능
 
@@ -197,13 +197,13 @@ flowchart LR
 - **문제**: 처음에는 이동과 도킹을 모두 비전으로 처리하려 했습니다. 대상 인식이 불안정했고, 검출 프로그램이 그래픽 부하로 반복해서 종료됐습니다.
 - **해결**: 이동은 공장 지도 좌표(웨이포인트) 기반으로 바꾸고, 비전은 도킹 직전 사진 한 장으로 수레 위치를 확인하는 데만 썼습니다. 검출은 YOLO 대신 HSV 색 영역 인식으로 바꿨습니다.
 - **결과**: 여러 AMR이 배분된 작업대로 이동 · 도킹 · 운반하는 흐름이 이어졌습니다.
-- 관련 커밋: [5ff4957](https://github.com/rokeydg1-sudo/cobot3_project2/commit/5ff4957fc95a95bdedfaa2c08b9fcca62aa53394), [a70e350](https://github.com/rokeydg1-sudo/cobot3_project2/commit/a70e350df32d216450222ee0c88dbbe7a8ab2ac9), [8b4420e](https://github.com/rokeydg1-sudo/cobot3_project2/commit/8b4420eeed48bbc3959414b513affa625fc76ff3)
+- 관련 커밋: [5ff4957](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/5ff4957fc95a95bdedfaa2c08b9fcca62aa53394), [a70e350](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/a70e350df32d216450222ee0c88dbbe7a8ab2ac9), [8b4420e](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/8b4420eeed48bbc3959414b513affa625fc76ff3)
 
 ### 7-2. 한 픽업 지점에서만 스냅샷 인식이 되지 않음
 - **문제**: 한 픽업 지점(작업 T4)에서는 스냅샷이 쓸 만한 측정값을 내지 못했습니다.
 - **원인**: 규명하지 못했습니다(수레 폭 예측, 조명, 접근 방향이 후보).
 - **조치**: 시연에서 실패하지 않도록 T4를 기본 작업 세트에서 뺐습니다. 원인을 고친 것이 아니라 증상을 피한 것이며, `TASK_IDS`로 다시 넣을 수 있습니다.
-- 관련 커밋: [addadcd](https://github.com/rokeydg1-sudo/cobot3_project2/commit/addadcd1300cfb4cb9cfc8d7d5afc1ea79cc9971)
+- 관련 커밋: [addadcd](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/addadcd1300cfb4cb9cfc8d7d5afc1ea79cc9971)
 
 ### 7-3. 여러 AMR의 경로가 겹침
 - **문제**: 공장 통로를 여러 AMR이 함께 써야 해서 경로가 겹칠 수 있었습니다.
@@ -218,7 +218,7 @@ flowchart LR
 ### 7-5. ROS 2와 Isaac Sim 연동 구조 정리 (통합 단계)
 - **문제**: 초기에는 TCP 위치 브리지와 더미 FMS로 시뮬레이터를 연결했습니다.
 - **해결**: Isaac ROS 2 Bridge(OmniGraph)로 위치 · 속도 명령을 주고받도록 바꿨습니다. 작업 배정도 FMS가 밀어 주는 방식에서 AMR이 요청해 가져가는 방식(`RequestTask`)으로 바꿨습니다.
-- 관련 커밋: [2caf11c](https://github.com/rokeydg1-sudo/cobot3_project2/commit/2caf11c23d8e05262462a3eb7bf02ba5342fcbf4), [c367ae7](https://github.com/rokeydg1-sudo/cobot3_project2/commit/c367ae7d55c1f5b24b5b166c7d01d94aaf32c253)
+- 관련 커밋: [2caf11c](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/2caf11c23d8e05262462a3eb7bf02ba5342fcbf4), [c367ae7](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/commit/c367ae7d55c1f5b24b5b166c7d01d94aaf32c253)
 
 ### 7-6. 두 PC 실행 (시도)
 - **문제**: 시뮬레이션 PC와 제어 PC를 나눠 실행하려 하자 브리지 기동 지연, 패키지를 찾지 못하는 문제, 도메인 설정 문제가 있었습니다.
@@ -267,4 +267,4 @@ docs/                          아키텍처 · 작업 기록 · 인수인계 문
 | [docs/planner_benchmark.md](docs/planner_benchmark.md) | 자체 풀이와 cuOpt 비교 |
 | [docs/HANDOFF_vision_docking.md](docs/HANDOFF_vision_docking.md) | 비전 도킹 인수인계 |
 | [docs/WORKLOG_2026-08-27.md](docs/WORKLOG_2026-08-27.md) | 최종 재구성 작업 기록 |
-| [이전 README (실행 방법 · 화면 설명 · 알아낸 점)](https://github.com/rokeydg1-sudo/cobot3_project2/blob/21f66a830dce64950f685f3c394e98d45272b94e/README.md) | 실행 명령, 성공 판정 로그, 환경 변수. 이 문서로 바꾸기 전의 README |
+| [이전 README (실행 방법 · 화면 설명 · 알아낸 점)](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/blob/21f66a830dce64950f685f3c394e98d45272b94e/README.md) | 실행 명령, 성공 판정 로그, 환경 변수. 이 문서로 바꾸기 전의 README |
