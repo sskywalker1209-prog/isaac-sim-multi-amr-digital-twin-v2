@@ -15,7 +15,7 @@ Doosan Robotics ROKEY BOOT CAMP 9기 협동 프로젝트(4인 팀, 2026.08.14 ~ 
 6. [주요 기술](#6-주요-기술)
 7. [문제 해결 과정](#7-문제-해결-과정)
 8. [최종 결과와 검증 범위](#8-최종-결과와-검증-범위)
-9. [프로젝트 구조](#9-프로젝트-구조)
+9. [프로젝트 구조와 실행 순서](#9-프로젝트-구조와-실행-순서)
 10. [관련 문서](#10-관련-문서)
 
 ---
@@ -236,7 +236,7 @@ flowchart LR
 
 이 README에는 확인된 기록이 없는 성공률 · 오차 · 이동거리 같은 수치를 적지 않았습니다.
 
-## 9. 프로젝트 구조
+## 9. 프로젝트 구조와 실행 순서
 
 ```
 scripts/                       실행 스크립트 (환경 · 브리지 · 컨트롤러 · 시각화 · cuOpt 풀이)
@@ -257,6 +257,37 @@ ros2_ws/src/
   interfaces/                  RequestTask.srv (통합 단계)
 docs/                          아키텍처 · 작업 기록 · 인수인계 문서
 ```
+
+### 실행 순서 (한 PC, 최종 시연 구성)
+
+Isaac Sim 5.1(`~/isaacsim`), ROS 2 Jazzy, NVIDIA GPU가 있는 Ubuntu 24.04 한 대에서 전부 실행합니다. 명령은 팀이 정리한 [이전 README 「2. 실행 방법」](https://github.com/sskywalker1209-prog/isaac-sim-multi-amr-digital-twin-v2/blob/21f66a830dce64950f685f3c394e98d45272b94e/README.md#2-실행-방법)을 따랐고, 환경 변수 · 화면 설명 · 성공 판정 로그는 그 문서에 자세히 있습니다. 모든 스크립트는 `scripts/rosenv.sh`로 같은 ROS 2 도메인을 씁니다.
+
+```bash
+# 준비 (처음 한 번)
+cd ros2_ws && colcon build --symlink-install && cd ..        # amr_control 은 interfaces 에 의존
+python3 -m venv --system-site-packages .venv_vision         # 인식 · 시각화 노드용
+python3 -m venv ~/.venvs/cuopt                              # cuOpt 는 Isaac Sim 과 다른 인터프리터
+~/.venvs/cuopt/bin/pip install --extra-index-url https://pypi.nvidia.com cuopt-cu12==26.8.0
+
+# 0. 이전 프로세스 정리
+bash scripts/cleanup.sh
+# 1. 작업 세트를 정하고 배분 계산 → simulation/isaac_sim/cuopt_plan.json
+#    (브리지가 한 번 만든 factory_inventory.json 필요. 계획과 브리지의 작업 세트는 같아야 함)
+TASKS=T1,T2,T3,T5,T6,T7            # 예: 브리지 코드 기본값(T4 제외). 7개 전부는 T1,…,T7
+~/.venvs/cuopt/bin/python scripts/plan_cuopt.py --tasks $TASKS
+# 2. Isaac Sim 공장 씬 + ROS 2 브리지 (AMR 3대, 배분 결과 사용)
+FLEET=amr1,amr2,amr3 TASK_IDS=$TASKS PLAN_SOLVER=cuopt bash scripts/run_bridge.sh
+# 3. 스냅샷 인식 노드와 계획 화면 (각각 별도 터미널)
+bash scripts/run_vision_node.sh
+bash scripts/run_planner_map.sh
+# 4. AMR 미션 컨트롤러, 로봇당 하나 (카메라 도킹은 amr1 만)
+bash scripts/run_controller.sh amr1 --vision-all
+bash scripts/run_controller.sh amr2
+bash scripts/run_controller.sh amr3
+```
+
+- 작업 세트(`TASK_IDS`): 브리지 코드 기본값은 스냅샷 인식이 되지 않던 T4 를 뺀 세트이고, `scripts/run_bridge.sh`는 따로 기본값을 둡니다. 그래서 위처럼 명시해서 넘깁니다.
+- 하드웨어 없이 볼 수 있는 것: [시연 영상](#2-시연-영상), [배분 풀이 비교](docs/planner_benchmark.md)(재현 명령 포함), 위 아키텍처 도식.
 
 ## 10. 관련 문서
 
